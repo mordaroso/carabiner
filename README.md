@@ -1,8 +1,10 @@
-# Carabiner
+# Carabiner [![Build Status](https://travis-ci.org/mordaroso/carabiner.png)](https://travis-ci.org/mordaroso/carabiner)
 
 Rubymotion wrapper for the easy access to the keychain.
 
-This gem is still under heavy development and will be released soon. Please be paitent.
+![Carabiners](http://upload.wikimedia.org/wikipedia/commons/2/2e/Cheap_carabiners.JPG)
+
+**This gem is still under heavy development and will be released soon. Please be paitent.**
 
 ## TODOs
 
