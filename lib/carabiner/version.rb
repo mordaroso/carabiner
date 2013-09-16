@@ -1,3 +1,3 @@
 module Carabiner
-  VERSION = "0.0.2-alpha1"
+  VERSION = "0.0.2.pre.alpha1"
 end
