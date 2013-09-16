@@ -1,3 +1,10 @@
 language: objective-c
 install: bundle install
 script: bundle exec rake spec
+before_script:
+- ./scripts/travis/add-key.sh
+after_script:
+- ./scripts/travis/remove-key.sh
+env:
+  global:
+    secure: Usy8ZlZSUKzHUEtxR6zcWhG7c7OnynTn85+L0jjgrMZYw1AOFOmSjttfvfci8/f312YpUXOayBOOtE3U6B0TSbSbs7IwPlf76ZW7ZYa7SyE+BAsdS1E97IwpVL7DhKs17ZZl+6Ln9IJpHuZGF5N4RG9ItPzCQs0IGhRSGE32iNk=
