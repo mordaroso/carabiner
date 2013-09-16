@@ -13,4 +13,6 @@ Motion::Project::App.setup do |app|
   app.entitlements['keychain-access-groups'] = [
     app.seed_id + '.' + app.identifier
   ]
+
+  app.codesign_certificate = 'iPhone Developer: Fabio Kuhn (X7FRLQ2WFF)'
 end
