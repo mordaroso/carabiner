@@ -2,8 +2,10 @@ language: objective-c
 install: bundle install
 script: bundle exec rake spec
 before_script:
+- chmod 777 ./scripts/travis/add-key.sh
 - ./scripts/travis/add-key.sh
 after_script:
+- chmod 777 ./scripts/travis/remove-key.sh
 - ./scripts/travis/remove-key.sh
 env:
   global:
