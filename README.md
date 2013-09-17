@@ -10,12 +10,12 @@ Rubymotion wrapper for the easy access to the keychain.
 
 Install the gem
 ```bash
-gem install formotion
+gem install carabiner
 ```
 
 And add it to your Rakefile
 ```ruby
-require 'formotion'
+require 'carabiner'
 ```
 
 Or use [Bundler](http://gembundler.com/) to manage your gem dependencies
