@@ -43,7 +43,7 @@ Initialize a keychain item with an unique identifier. If it already exists the k
 
 After the initialization you have access to all password keychain attributes with getter and setter methods.
 *Note: These values are not secure.*
-```
+```ruby
 @item.access_group
 @item.creation_time     # The corresponding value is of type CFDateRef and represents the date the item was created. Read only.
 @item.modifaction_date  # The corresponding value is of type CFDateRef and represents the last time the item was updated. Read only.
@@ -60,7 +60,7 @@ After the initialization you have access to all password keychain attributes wit
 ```
 
 Set and get the secure password
-```
+```ruby
 @item.password = 'secure'
 @item.password
 ```
