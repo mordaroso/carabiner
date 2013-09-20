@@ -4,7 +4,7 @@ class AppDelegate
     @window.rootViewController = SettingsController.alloc.init
     @window.rootViewController.wantsFullScreenLayout = true
     @window.makeKeyAndVisible
-    return true
+    true
   end
 
   def user

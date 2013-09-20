@@ -2,7 +2,7 @@ class User
   attr_accessor :username, :password
 
   def initialize
-    @keychain = Carabiner::PasswordKeychainItem.new 'ExampleAppLoginData'
+    @keychain = Carabiner::PasswordKeychainItem.new :generic => 'ExampleAppLoginData'
     load
   end
 

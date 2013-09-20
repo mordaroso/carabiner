@@ -35,16 +35,16 @@ app.entitlements['keychain-access-groups'] = [
 ]
 ```
 
-Initialize a keychain item with an unique identifier. If it already exists the keychain data will be available otherwise it will set it up.
+Initialize a keychain item with an unique identifier as a finder hash. If it already exists the keychain data will be available otherwise it will set it up.
 
 ```ruby
-@item = Carabiner::PasswordKeychainItem.new 'YourKeyChainItemIdentifier'
+@item = Carabiner::PasswordKeychainItem.new generic: 'YourKeyChainItemIdentifier'
 ```
 
-After the initialization you have access to all password keychain attributes with getter and setter methods.
+After the initialization you have access to all kSecClassGenericPassword attributes with getter and setter methods.
 *Note: These values are not secure.*
 ```ruby
-@item.access_group
+@item.access_group      # The corresponding value is of type CFStringRef and indicates which access group an item is in.
 @item.creation_time     # The corresponding value is of type CFDateRef and represents the date the item was created. Read only.
 @item.modifaction_date  # The corresponding value is of type CFDateRef and represents the last time the item was updated. Read only.
 @item.description       # The corresponding value is of type CFStringRef and specifies a user-visible string describing this kind of item (for example, "Disk image password").

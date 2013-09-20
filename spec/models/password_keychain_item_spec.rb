@@ -1,14 +1,18 @@
 module Carabiner
   describe PasswordKeychainItem do
     before do
-      @item = PasswordKeychainItem.new 'TestPasswordItem'
+      @item = PasswordKeychainItem.new :generic => 'TestPasswordItem'
       @item.password = 'secret'
       @item.account  = 'Test'
       @item.save!
     end
 
+    after do
+      @item.delete!
+    end
+
     it 'initialize attributes' do
-      new_item = PasswordKeychainItem.new 'TestPasswordItem'
+      new_item = PasswordKeychainItem.new :generic => 'TestPasswordItem'
       new_item.account.should == 'Test'
       new_item.password.should == 'secret'
     end

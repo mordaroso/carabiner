@@ -1,159 +1,66 @@
 module Carabiner
-  class PasswordKeychainItem
-
-    attr_accessor :generic_password_query
+  class PasswordKeychainItem < KeychainItem
 
     # These are the default constants and their respective types,
     # available for the kSecClassGenericPassword Keychain Item class:
     #
     # See the header file Security/SecItem.h for more details.
-    ATTRIBUTES = {
-      :access_group => KSecAttrAccessGroup,
-      :creation_time => KSecAttrCreationDate,
-      :modifaction_date => KSecAttrModificationDate,
-      :description => KSecAttrDescription,
-      :comment => KSecAttrComment,
-      :creator => KSecAttrCreator,
-      :type => KSecAttrType,
-      :label => KSecAttrLabel,
-      :is_invisible => KSecAttrIsInvisible,
-      :is_negative => KSecAttrIsNegative,
-      :account => KSecAttrAccount,
-      :service => KSecAttrService,
-      :generic => KSecAttrGeneric,
-      :password => KSecValueData
-    }
+    attributes({
+                 # The corresponding value is of type CFStringRef and indicates which access group an item is in. Access groups can be used to share keychain items among two or more applications. For applications to share a keychain item, the applications must have a common access group listed in their keychain-access-groups entitlement, and the application adding the shared item to the keychain must specify this shared access-group name as the value for this key in the dictionary passed to the SecItemAdd function.
+                 # An application can be a member of any number of access groups. By default, the SecItemUpdate, SecItemDelete, and SecItemCopyMatching functions search all the access groups an application is a member of. Include this key in the search dictionary for these functions to specify which access group is searched.
+                 # A keychain item can be in only a single access group.
+                 access_group: KSecAttrAccessGroup,
 
-    ATTRIBUTES.keys.each do |key|
-      attr_accessor key
-    end
+                 # The corresponding value is of type CFDateRef and represents the date the item was created. Read only.
+                 creation_time: KSecAttrCreationDate,
 
-    NoErr = 0
+                 # The corresponding value is of type CFDateRef and represents the last time the item was updated. Read only.
+                 modifaction_date: KSecAttrModificationDate,
 
-    def initialize identifier, accessGroup = nil
-      self.generic_password_query = {}
-      generic_password_query[KSecClass] = KSecClassGenericPassword
-      generic_password_query[KSecAttrGeneric] = identifier
+                 # The corresponding value is of type CFStringRef and specifies a user-visible string describing this kind of item (for example, "Disk image password").
+                 description: KSecAttrDescription,
 
-      if !accessGroup.nil? && !Device.simulator?
-        generic_password_query[KSecAttrAccessGroup] = accessGroup
-      end
+                 # The corresponding value is of type CFStringRef and contains the user-editable comment for this item.
+                 comment: KSecAttrComment,
 
-      generic_password_query[KSecMatchLimit] = KSecMatchLimitOne
-      generic_password_query[KSecReturnAttributes] = KCFBooleanTrue
+                 # The corresponding value is of type CFNumberRef and represents the item's creator. This number is the unsigned integer representation of a four-character code (for example, 'aCrt').
+                 creator: KSecAttrCreator,
 
-      tempQuery = NSDictionary.dictionaryWithDictionary generic_password_query
-      outDictionaryPtr = Pointer.new(:object)
+                 # The corresponding value is of type CFNumberRef and represents the item's type. This number is the unsigned integer representation of a four-character code (for example, 'aTyp').
+                 type: KSecAttrType,
 
-      if !(SecItemCopyMatching(tempQuery, outDictionaryPtr) == NoErr)
-        reset!
-        self.generic = identifier
+                 # The corresponding value is of type CFStringRef and contains the user-visible label for this item.
+                 label: KSecAttrLabel,
 
-        if !accessGroup.nil? && !Device.simulator?
-          generic_password_query[KSecAttrAccessGroup] = accessGroup
-        end
-      else
-        self.keychain_item_data = secItemFormatToDictionary(outDictionaryPtr[0])
-      end
-    end
+                 # The corresponding value is of type CFBooleanRef and is kCFBooleanTrue if the item is invisible (that is, should not be displayed).
+                 is_invisible: KSecAttrIsInvisible,
+
+                 # The corresponding value is of type CFBooleanRef and indicates whether there is a valid password associated with this keychain item. This is useful if your application doesn't want a password for some particular service to be stored in the keychain, but prefers that it always be entered by the user.
+                 is_negative: KSecAttrIsNegative,
+
+                 # The corresponding value is of type CFStringRef and contains an account name. Items of class kSecClassGenericPassword and kSecClassInternetPassword have this attribute.
+                 account: KSecAttrAccount,
+
+                 # The corresponding value is a string of type CFStringRef that represents the service associated with this item. Items of class kSecClassGenericPassword have this attribute.
+                 service: KSecAttrService,
+
+                 # The corresponding value is of type CFDataRef and contains a user-defined attribute. Items of class kSecClassGenericPassword have this attribute.
+                 generic: KSecAttrGeneric,
+
+                 # Data attribute key. A persistent reference to a credential can be stored on disk for later use or passed to other processes.
+                 # The corresponding value is of type CFDataRef.  For keys and password items, the data is secret (encrypted) and may require the user to enter a password for access.
+                 password: KSecValueData
+               })
+
+    sec_class KSecClassGenericPassword
 
     def reset!
-      delete! unless keychain_item_data.empty?
+      super
       self.account     = ''
       self.label       = ''
       self.description = ''
       self.password    = ''
       true
-    end
-
-    def save!
-      writeToKeychain
-      true
-    end
-
-    def delete!
-      tempDictionary = dictionaryToSecItemFormat(keychain_item_data)
-      result = SecItemDelete(tempDictionary)
-      if result != NoErr && result != ErrSecItemNotFound
-        raise KeychainReturnCodeException.new "Problem deleting current dictionary.", result
-      end
-      self.keychain_item_data = {}
-      true
-    end
-
-    def self.key_accepted? key
-      ATTRIBUTES.values.include? key
-    end
-
-    private
-
-    def keychain_item_data
-      ATTRIBUTES.keys.inject({}) do |memo, getter_name|
-        constant = ATTRIBUTES[getter_name]
-        value    = send(getter_name)
-        memo[constant] = value if value
-        memo
-      end
-    end
-
-    def keychain_item_data=(hash)
-      ATTRIBUTES.each do |getter_name, constant|
-        send("#{getter_name}=", hash[constant])
-      end
-    end
-
-    def dictionaryToSecItemFormat dictionaryToConvert
-      returnDictionary = NSMutableDictionary.dictionaryWithDictionary dictionaryToConvert
-      returnDictionary[KSecClass] = KSecClassGenericPassword
-      passwordString = dictionaryToConvert[KSecValueData]
-
-      returnDictionary[KSecValueData] = passwordString.dataUsingEncoding(NSUTF8StringEncoding)
-      returnDictionary
-    end
-
-    def secItemFormatToDictionary dictionaryToConvert
-      returnDictionary = NSMutableDictionary.dictionaryWithDictionary dictionaryToConvert
-      returnDictionary[KSecReturnData] = KCFBooleanTrue
-      returnDictionary[KSecClass] = KSecClassGenericPassword
-
-      passwordDataPtr = Pointer.new(:object)
-
-      result = SecItemCopyMatching(returnDictionary, passwordDataPtr)
-      if result == NoErr
-        returnDictionary.delete KSecReturnData
-        passwordData = passwordDataPtr[0]
-        password = NSString.alloc.initWithBytes(passwordData.bytes, length: passwordData.length, encoding: NSUTF8StringEncoding)
-        returnDictionary[KSecValueData] = password
-      else
-        raise KeychainReturnCodeException.new "Serious error, no matching item found in the keychain.", result
-      end
-
-      returnDictionary
-    end
-
-    def writeToKeychain
-      attributesPtr = Pointer.new(:object)
-      if SecItemCopyMatching(generic_password_query, attributesPtr) == NoErr
-        query = NSMutableDictionary.dictionaryWithDictionary attributesPtr[0]
-
-        query[KSecClass] = generic_password_query[KSecClass]
-        attributes_to_update = dictionaryToSecItemFormat keychain_item_data
-        attributes_to_update.delete_if { |key, value| !self.class.key_accepted? key }
-
-        if Device.simulator?
-          attributes_to_update.delete KSecAttrAccessGroup
-        end
-
-        result = SecItemUpdate(query, attributes_to_update)
-        unless result == NoErr
-          raise KeychainReturnCodeException.new "Couldn't update the Keychain Item.", result
-        end
-      else
-        result = SecItemAdd(dictionaryToSecItemFormat(keychain_item_data), nil)
-        unless result == NoErr
-          raise KeychainReturnCodeException.new "Couldn't add the Keychain Item.", result
-        end
-      end
     end
 
   end
