@@ -38,7 +38,7 @@ app.entitlements['keychain-access-groups'] = [
 Initialize a keychain item with an unique identifier as a finder hash. If it already exists the keychain data will be available otherwise it will set it up.
 
 ```ruby
-@item = Carabiner::PasswordKeychainItem.new generic: 'YourKeyChainItemIdentifier'
+@item = Carabiner::PasswordItem.new generic: 'YourKeyChainItemIdentifier'
 ```
 
 After the initialization you have access to all kSecClassGenericPassword attributes with getter and setter methods.

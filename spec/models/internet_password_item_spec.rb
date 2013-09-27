@@ -1,7 +1,7 @@
 module Carabiner
-  describe InternetPasswordKeychainItem do
+  describe InternetPasswordItem do
     before do
-      @item = InternetPasswordKeychainItem.new :server => 'github.com', :protocol => :https
+      @item = InternetPasswordItem.new :server => 'github.com', :protocol => :https
       @item.password = 'secret'
       @item.account  = 'Test'
       @item.authentication_type = :html_form
@@ -13,7 +13,7 @@ module Carabiner
     end
 
     it 'initialize attributes' do
-      new_item = InternetPasswordKeychainItem.new :server => 'github.com', :protocol => :https
+      new_item = InternetPasswordItem.new :server => 'github.com', :protocol => :https
       new_item.account.should == 'Test'
       new_item.password.should == 'secret'
       new_item.server.should   == 'github.com'

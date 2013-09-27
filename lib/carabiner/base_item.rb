@@ -1,5 +1,5 @@
 module Carabiner
-  class KeychainItem
+  class BaseItem
     attr_accessor :query, :persistent, :identifiers
 
     def self.attributes(attrs = nil)
@@ -24,7 +24,7 @@ module Carabiner
       self.query = data
       query[KSecClass] = self.class.sec_class
 
-      if Device.simulator?
+      if BubbleWrap::Device.simulator?
         query.delete(KSecAttrAccessGroup)
       end
 

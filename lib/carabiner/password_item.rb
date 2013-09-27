@@ -1,5 +1,5 @@
 module Carabiner
-  class PasswordKeychainItem < KeychainItem
+  class PasswordItem < BaseItem
 
     # These are the default constants and their respective types,
     # available for the kSecClassGenericPassword Keychain Item class:

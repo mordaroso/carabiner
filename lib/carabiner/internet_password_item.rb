@@ -1,5 +1,5 @@
 module Carabiner
-  class InternetPasswordKeychainItem < KeychainItem
+  class InternetPasswordItem < BaseItem
     # These are the default constants and their respective types,
     # available for the KSecClassInternetPassword Keychain Item class:
     #

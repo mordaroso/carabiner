@@ -1,7 +1,7 @@
 module Carabiner
-  describe PasswordKeychainItem do
+  describe PasswordItem do
     before do
-      @item = PasswordKeychainItem.new :generic => 'TestPasswordItem'
+      @item = PasswordItem.new :generic => 'TestPasswordItem'
       @item.password = 'secret'
       @item.account  = 'Test'
       @item.save!
@@ -12,7 +12,7 @@ module Carabiner
     end
 
     it 'initialize attributes' do
-      new_item = PasswordKeychainItem.new :generic => 'TestPasswordItem'
+      new_item = PasswordItem.new :generic => 'TestPasswordItem'
       new_item.account.should == 'Test'
       new_item.password.should == 'secret'
     end
