@@ -7,6 +7,7 @@ Gem::Specification.new do |gem|
   gem.homepage      = 'http://rubygems.org/gems/carabiner'
   gem.summary       = 'Rubymotion wrapper for the keychain'
   gem.description   = 'Easy access to the ios keychain'
+  gem.license       = 'MIT'
 
   gem.files         = `git ls-files`.split($\)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
